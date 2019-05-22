@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <UserSecretsId>aspnet-Backend6-4fd1b34e-3551-4869-9119-f7b6184396dc</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\20190521061751_AddForumMessageAttachments.cs" />
+    <Compile Remove="Data\Migrations\20190521061751_AddForumMessageAttachments.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190521062502_AddForumMessages.cs" />
+    <Compile Remove="Data\Migrations\20190521062502_AddForumMessages.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190521071112_AddForumCategories.cs" />
+    <Compile Remove="Data\Migrations\20190521071112_AddForumCategories.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.3" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.4" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.1" />
+    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
+  </ItemGroup>
+
+</Project>
