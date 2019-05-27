@@ -6,24 +6,24 @@
 
 <h2>Create</h2>
 
-<h4>CarBrand</h4>
+<h4>Car Brand</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="PathBrand" class="control-label"></label>
-                <input asp-for="PathBrand" class="form-control" />
+                <label asp-for="PathBrand" class="control-label">Логотип марки</label>
+                <input type="file" asp-for="PathBrand" class="form-control" />
                 <span asp-validation-for="PathBrand" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
+                <label asp-for="Name" class="control-label">Название марки</label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
+                <label asp-for="Description" class="control-label">Краткое писание</label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
