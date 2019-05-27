@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Backend6</title>
+    <title>@ViewData["Title"] - Запчастовик</title>
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -26,18 +26,21 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Posts" asp-action="Index" class="navbar-brand">Backend6</a>
+                <a asp-area="" asp-controller="CarBrands" asp-action="Index" class="navbar-brand">Запчастовик</a>
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Posts" asp-action="Index">Blog</a></li>
+                    <li><a asp-area="" asp-controller="CarBrands" asp-action="Index">На главную</a></li>
+                    <li><a asp-area="" asp-controller="CarModels" asp-action="Index">Контакты</a></li>
+                    <li><a asp-area="" asp-controller="Baskets" asp-action="Index">Корзина</a></li>
                     @if (User.IsInRole(ApplicationRoles.Administrators))
                     {
-                        <li><a asp-area="" asp-controller="PostCategories" asp-action="Index">Blog Categories</a></li>
+                        <li><a href="#">Список заказов</a></li>
                     }
-                    <li><a asp-area="" asp-controller="Mockups" asp-action="Index">Mockups</a></li>
-                    <li><a asp-area="" asp-controller="ForumCategories" asp-action="Index">Forum</a></li>
+
                 </ul>
+                @*<ul class="nav navbar-nav pull-right"> 
+                </ul>*@
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
@@ -46,7 +49,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2017 - Backend6</p>
+            <p>&copy; 2019 - Prinj</p>
         </footer>
     </div>
 

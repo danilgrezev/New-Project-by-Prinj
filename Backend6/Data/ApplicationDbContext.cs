@@ -24,14 +24,27 @@ namespace Backend6.Data
 
         public DbSet<PostAttachment> PostAttachments { get; set; }
 
-       
+        public DbSet<CarBrand> CarBrands { get; set; }
+
+        public DbSet<CarModel> CarModels { get; set; }
+
+        public DbSet<CarGrade> CarGrades { get; set; }
+
+        public DbSet<CarPart> CarParts { get; set; }
+
+        public DbSet<CarDetail> CarDetails { get; set; }
+
+        public DbSet<Attachment> Attachments { get; set; }
+
+        public DbSet<Basket> Baskets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             builder.Entity<Post>().HasOne(x => x.Creator).WithMany().OnDelete(DeleteBehavior.Restrict);
-            builder.Entity<PostComment>().HasOne(x => x.Creator).WithMany().OnDelete(DeleteBehavior.Restrict);            
+            builder.Entity<PostComment>().HasOne(x => x.Creator).WithMany().OnDelete(DeleteBehavior.Restrict);
+            
         }
     }
 }
