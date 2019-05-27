@@ -60,14 +60,11 @@ namespace Backend6
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                    name: "forum",
-                    template: "Forum",
-                    defaults: new { controller = "ForumCategories", action = "Index" });
+               
 
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Posts}/{action=Index}/{id?}");
+                    template: "{controller=CarBrands}/{action=Index}/{id?}");
             });
 
             using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
