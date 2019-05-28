@@ -1,14 +1,15 @@
 ﻿@model IEnumerable<Backend6.Models.CarBrand>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Запчастовик";
 }
 
-<h2>@ViewBag.Title</h2>
+<h2>Выберите марку интересующего Вас авто</h2>
 <div class="row">
     @if (User.IsInRole(ApplicationRoles.Administrators))
     {
         <div class="col-xs-3 col-md-2">
+            <p>Добавить марку</p>
             <a asp-action="Create" class="thumbnail new-image">
                 <div>
                     + Upload
@@ -18,13 +19,19 @@
     }
     @foreach (var item in Model)
     {
-        <div class="col-xs-6 col-md-3">
+        <div class="col-xs-3 col-md-2">
+            <p>@item.Name</p>
             <a asp-action="Details" asp-route-id="@item.Id" class="thumbnail image">
                 <img src="@item.PathBrand" alt="Image" />
-
             </a>
+            @if (User.IsInRole(ApplicationRoles.Administrators))
+            {
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <text>|</text>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            }
         </div>
     }
+    
 </div>
 
 

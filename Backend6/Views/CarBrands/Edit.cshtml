@@ -1,4 +1,4 @@
-﻿@model Backend6.Models.CarBrand
+﻿@model Backend6.Models.ViewModels.CarBrandEditModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,7 +12,7 @@
     <div class="col-md-4">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            
             <div class="form-group">
                 <label asp-for="PathBrand" class="control-label"></label>
                 <input type="file" asp-for="PathBrand" class="form-control" />
