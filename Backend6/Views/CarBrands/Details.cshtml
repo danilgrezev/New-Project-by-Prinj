@@ -4,33 +4,62 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+@*<h2>Details</h2>
 
-<div>
-    <h4>CarBrand</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.PathBrand)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.PathBrand)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div>
+        <h4>CarBrand</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.PathBrand)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.PathBrand)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Description)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>*@
+
+
+<h2>@ViewBag.Title</h2>
+<h1>@ViewBag.CarBrand.Name<small> <a href="#">@ViewBag.Description</a></small></h1>
+<p>
+    <a asp-controller="CarBrands" asp-action="Index" asp-route-backId="" class="btn btn-default">Back</a>
+</p>
+
+<div class="row">
+    @if (User.IsInRole(ApplicationRoles.Administrators))
+    {
+        <div class="col-xs-3 col-md-2">
+            <a asp-action="Create" asp-controller="CarModels" class="thumbnail new-image">
+                <div>
+                    + Upload
+                </div>
+            </a>
+        </div>
+    }
+    @foreach (var item in Model.CarModels)
+    {
+        <div class="col-xs-6 col-md-3">
+            <a asp-action="Details" asp-route-id="@item.Id" class="thumbnail image">
+                <img src="@item.ModelPath" alt="Image" />
+
+            </a>
+        </div>
+    }
 </div>
