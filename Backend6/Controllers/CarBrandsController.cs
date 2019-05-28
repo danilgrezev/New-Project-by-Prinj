@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -7,22 +8,37 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Backend6.Data;
 using Backend6.Models;
+using Backend6.Models.ViewModels;
+//using Backend6.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Net.Http.Headers;
+
 
 namespace Backend6.Controllers
 {
     public class CarBrandsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private static readonly HashSet<String> AllowedExtensions = new HashSet<String> { ".jpg", ".jpeg", ".png", ".gif" };
 
-        public CarBrandsController(ApplicationDbContext context)
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> userManager;
+        //private readonly IUserPermissionsService userPermissions;
+        private readonly IHostingEnvironment hostingEnvironment;
+
+        public CarBrandsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager/*, IUserPermissionsService userPermissions*/, IHostingEnvironment hostingEnvironment)
         {
-            _context = context;
+            this._context = context;
+            this.userManager = userManager;
+            //this.userPermissions = userPermissions;
+            this.hostingEnvironment = hostingEnvironment;
         }
 
         // GET: CarBrands
         public async Task<IActionResult> Index()
         {
-            return View(await _context.CarBrands.ToListAsync());
+            return this.View(await this._context.CarBrands.ToListAsync());
         }
 
         // GET: CarBrands/Details/5
@@ -30,23 +46,23 @@ namespace Backend6.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var carBrand = await _context.CarBrands
+            var carBrand = await this._context.CarBrands
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (carBrand == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            return View(carBrand);
+            return this.View(carBrand);
         }
-
+        [Authorize]
         // GET: CarBrands/Create
         public IActionResult Create()
         {
-            return View();
+            return this.View(new CarBrandEditModel());
         }
 
         // POST: CarBrands/Create
@@ -54,16 +70,40 @@ namespace Backend6.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PathBrand,Name,Description")] CarBrand carBrand)
+        public async Task<IActionResult> Create( CarBrandEditModel model)
         {
-            if (ModelState.IsValid)
+            var fileName = Path.GetFileName(ContentDispositionHeaderValue.Parse(model.PathBrand.ContentDisposition).FileName.Value.Trim('"'));
+            var fileExt = Path.GetExtension(fileName);
+
+            if (!CarBrandsController.AllowedExtensions.Contains(fileExt))
             {
-                carBrand.Id = Guid.NewGuid();
-                _context.Add(carBrand);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                this.ModelState.AddModelError(nameof(model.PathBrand), "This file type is prohibited");
             }
-            return View(carBrand);
+
+
+            if (this.ModelState.IsValid)
+            {
+                var carBrand = new CarBrand
+                {
+                    Name = model.Name,
+                    Description = model.Description,                    
+
+                };
+
+                var attachmentPath = Path.Combine(this.hostingEnvironment.WebRootPath, "attachments", carBrand.Id.ToString("N") + fileExt);
+                carBrand.PathBrand = $"/attachments/{carBrand.Id:N}{fileExt}";
+                using (var fileStream = new FileStream(attachmentPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
+                {
+                    await model.PathBrand.CopyToAsync(fileStream);
+                }
+
+
+                carBrand.Id = Guid.NewGuid();
+                this._context.Add(carBrand);
+                await this._context.SaveChangesAsync();
+                return this.RedirectToAction("Index");
+            }
+            return this.View(model);
         }
 
         // GET: CarBrands/Edit/5
@@ -71,15 +111,22 @@ namespace Backend6.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var carBrand = await _context.CarBrands.SingleOrDefaultAsync(m => m.Id == id);
+            var carBrand = await this._context.CarBrands.SingleOrDefaultAsync(m => m.Id == id);
             if (carBrand == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
-            return View(carBrand);
+            var model = new CarBrandEditModel
+            {
+                Name = carBrand.Name,
+                Description = carBrand.Description
+            };
+
+            this.ViewBag.CarBrand = carBrand;
+            return this.View(model);
         }
 
         // POST: CarBrands/Edit/5
@@ -87,34 +134,44 @@ namespace Backend6.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,PathBrand,Name,Description")] CarBrand carBrand)
+        public async Task<IActionResult> Edit(Guid? id, CarBrandEditModel model)
         {
-            if (id != carBrand.Id)
+            var fileName = Path.GetFileName(ContentDispositionHeaderValue.Parse(model.PathBrand.ContentDisposition).FileName.Value.Trim('"'));
+            var fileExt = Path.GetExtension(fileName);
+
+            if (!CarBrandsController.AllowedExtensions.Contains(fileExt))
             {
-                return NotFound();
+                this.ModelState.AddModelError(nameof(model.PathBrand), "This file type is prohibited");
             }
 
-            if (ModelState.IsValid)
+            if (id == null)
             {
-                try
-                {
-                    _context.Update(carBrand);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CarBrandExists(carBrand.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return this.NotFound();
             }
-            return View(carBrand);
+            var carBrand = await this._context.CarBrands.SingleOrDefaultAsync(m => m.Id == id);
+            if (carBrand == null)
+            {
+                return this.NotFound();
+            }
+
+            if (this.ModelState.IsValid)
+            {
+                var attachmentPath = Path.Combine(this.hostingEnvironment.WebRootPath, "attachments", carBrand.Id.ToString("N") + fileExt);
+                carBrand.PathBrand = $"/attachments/{carBrand.Id:N}{fileExt}";
+                using (var fileStream = new FileStream(attachmentPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
+                {
+                    await model.PathBrand.CopyToAsync(fileStream);
+                }
+
+                carBrand.Name = model.Name;
+                carBrand.Description = model.Description;
+
+                await this._context.SaveChangesAsync();
+                return this.RedirectToAction("Index");
+            }
+
+            this.ViewBag.CarBrand = carBrand;
+            return this.View(model);
         }
 
         // GET: CarBrands/Delete/5
@@ -122,17 +179,17 @@ namespace Backend6.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var carBrand = await _context.CarBrands
+            var carBrand = await this._context.CarBrands
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (carBrand == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            return View(carBrand);
+            return this.View(carBrand);
         }
 
         // POST: CarBrands/Delete/5
@@ -140,15 +197,15 @@ namespace Backend6.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var carBrand = await _context.CarBrands.SingleOrDefaultAsync(m => m.Id == id);
-            _context.CarBrands.Remove(carBrand);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var carBrand = await this._context.CarBrands.SingleOrDefaultAsync(m => m.Id == id);
+            this._context.CarBrands.Remove(carBrand);
+            await this._context.SaveChangesAsync();
+            return this.RedirectToAction("Index");
         }
 
         private bool CarBrandExists(Guid id)
         {
-            return _context.CarBrands.Any(e => e.Id == id);
+            return this._context.CarBrands.Any(e => e.Id == id);
         }
     }
 }
