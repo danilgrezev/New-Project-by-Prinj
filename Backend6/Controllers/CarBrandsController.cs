@@ -42,20 +42,21 @@ namespace Backend6.Controllers
         }
 
         // GET: CarBrands/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid? carId)
         {
-            if (id == null)
+            if (carId == null)
             {
                 return this.NotFound();
             }
 
             var carBrand = await this._context.CarBrands
-                .SingleOrDefaultAsync(m => m.Id == id);
+                .Include(f => f.CarModels)
+                .SingleOrDefaultAsync(m => m.Id == carId);
             if (carBrand == null)
             {
                 return this.NotFound();
             }
-
+            this.ViewBag.CarBrandId = carId;
             return this.View(carBrand);
         }
         [Authorize]
@@ -86,12 +87,12 @@ namespace Backend6.Controllers
                 var carBrand = new CarBrand
                 {
                     Name = model.Name,
-                    Description = model.Description,                    
+                    Description = model.Description                    
 
                 };
 
-                var attachmentPath = Path.Combine(this.hostingEnvironment.WebRootPath, "attachments", carBrand.Id.ToString("N") + fileExt);
-                carBrand.PathBrand = $"/attachments/{carBrand.Id:N}{fileExt}";
+                var attachmentPath = Path.Combine(this.hostingEnvironment.WebRootPath, "attachments/brands", carBrand.Id.ToString("N") + fileExt);
+                carBrand.PathBrand = $"/attachments/brands/{carBrand.Id:N}{fileExt}";
                 using (var fileStream = new FileStream(attachmentPath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.Read))
                 {
                     await model.PathBrand.CopyToAsync(fileStream);

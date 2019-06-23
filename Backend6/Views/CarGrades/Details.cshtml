@@ -1,42 +1,39 @@
 ﻿@model Backend6.Models.CarGrade
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Выберите нужную часть автомобиля";
 }
 
-<h2>Details</h2>
+<h2>@ViewBag.Title</h2>
+<h1>@Model.Name<small> @Model.Description</small></h1>
+<p>
+    <a asp-controller="CarModels" asp-action="Details" asp-route-backId="" class="btn btn-default">Back</a>
+</p>
 
-<div>
-    <h4>CarGrade</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.GradePath)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.GradePath)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.CarModel)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.CarModel.ModelPath)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="row">
+    @if (User.IsInRole(ApplicationRoles.Administrators))
+    {
+        <div class="col-xs-3 col-md-2">
+            <p>Добавить раздел</p>
+            <a asp-action="Create" asp-controller="CarGrades" asp-route-carModelId="@ViewBag.CarModelId" class="thumbnail new-image">
+                <div>
+                    + Upload
+                </div>
+            </a>
+        </div>
+    }
+    @foreach (var item in Model.CarParts)
+    {
+        <div class="col-xs-3 col-md-2">
+            <p>@item.Name</p>
+            <a asp-action="Details" asp-route-carBrandId="" class="thumbnail image">
+                <img src="@item.PartPath" alt="Image" />
+            </a>
+            @if (User.IsInRole(ApplicationRoles.Administrators))
+            {
+                <a asp-action="Edit" asp-controller="CarParts" asp-route-id="@item.Id">Edit</a> <text>|</text>
+                <a asp-action="Delete" asp-controller="CarParts" asp-route-id="@item.Id">Delete</a>
+            }
+        </div>
+    }
 </div>

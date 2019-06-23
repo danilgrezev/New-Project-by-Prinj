@@ -21,5 +21,11 @@
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.2" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\attachments\models\" />
+    <Folder Include="wwwroot\attachments\details\" />
+    <Folder Include="wwwroot\attachments\grades\" />
+    <Folder Include="wwwroot\attachments\parts\" />
+  </ItemGroup>
 
 </Project>

@@ -1,10 +1,8 @@
 ﻿@model Backend6.Models.CarBrand
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Выберите модель авто";
 }
-
-
 
 <h2>@ViewBag.Title</h2>
 <h1>@Model.Name<small> @Model.Description</small></h1>
@@ -16,52 +14,26 @@
     @if (User.IsInRole(ApplicationRoles.Administrators))
     {
         <div class="col-xs-3 col-md-2">
-            <a asp-action="Create" asp-controller="CarModels" class="thumbnail new-image">
+            <p>Добавить модель</p>
+            <a asp-action="Create" asp-controller="CarModels" asp-route-carBrandId="@ViewBag.CarBrandId" class="thumbnail new-image">
                 <div>
                     + Upload
                 </div>
             </a>
         </div>
     }
-    @*@foreach (var item in Model.CarModels)
+    @foreach (var item in Model.CarModels)
     {
-        <div class="col-xs-6 col-md-3">
-            <a asp-action="Details" asp-route-id="@item.Id" class="thumbnail image">
+        <div class="col-xs-3 col-md-2">
+            <p>@item.Name</p>
+            <a  asp-action="Details" asp-route-carModelId="@item.Id" class="thumbnail image">
                 <img src="@item.ModelPath" alt="Image" />
-
             </a>
+            @if (User.IsInRole(ApplicationRoles.Administrators))
+            {
+                <a asp-action="Edit" asp-controller="CarModels" asp-route-id="@item.Id">Edit</a> <text>|</text>
+                <a asp-action="Delete" asp-controller="CarModels" asp-route-id="@item.Id">Delete</a>
+            }
         </div>
-    }*@
+    }
 </div>
-
-
-@*<h2>Details</h2>
-
-    <div>
-        <h4>CarBrand</h4>
-        <hr />
-        <dl class="dl-horizontal">
-            <dt>
-                @Html.DisplayNameFor(model => model.PathBrand)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.PathBrand)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.Name)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Name)
-            </dd>
-            <dt>
-                @Html.DisplayNameFor(model => model.Description)
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.Description)
-            </dd>
-        </dl>
-    </div>
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-        <a asp-action="Index">Back to List</a>
-    </div>*@
