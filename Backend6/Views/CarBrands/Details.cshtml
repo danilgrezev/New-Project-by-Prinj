@@ -26,7 +26,7 @@
     {
         <div class="col-xs-3 col-md-2">
             <p>@item.Name</p>
-            <a  asp-action="Details" asp-route-carModelId="@item.Id" class="thumbnail image">
+            <a  asp-action="Details" asp-controller="CarModels" asp-route-carModelId="@item.Id" class="thumbnail image">
                 <img src="@item.ModelPath" alt="Image" />
             </a>
             @if (User.IsInRole(ApplicationRoles.Administrators))

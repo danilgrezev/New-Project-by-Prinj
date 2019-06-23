@@ -38,28 +38,28 @@ namespace Backend6.Controllers
         // GET: CarGrades
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.CarGrades
+            var applicationDbContext = this._context.CarGrades
                 .Include(c => c.CarModel);
-            return View(await applicationDbContext.ToListAsync());
+            return this.View(await applicationDbContext.ToListAsync());
         }
 
         // GET: CarGrades/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid? carGradeId)
         {
-            if (id == null)
+            if (carGradeId == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var carGrade = await _context.CarGrades
-                .Include(c => c.CarModel)
-                .SingleOrDefaultAsync(m => m.Id == id);
+            var carGrade = await this._context.CarGrades
+                .Include(v => v.CarParts)                
+                .SingleOrDefaultAsync(m => m.Id == carGradeId);
             if (carGrade == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
-
-            return View(carGrade);
+            this.ViewBag.CarGradeId = carGradeId;
+            return this.View(carGrade);
         }
 
         [Authorize]
@@ -70,10 +70,8 @@ namespace Backend6.Controllers
             {
                 return this.NotFound();
             }
-
             var carModel = await this._context.CarModels
                 .SingleOrDefaultAsync(m => m.Id == carModelId);
-
             if (carModel == null)
             {
                 return this.NotFound();
@@ -81,9 +79,9 @@ namespace Backend6.Controllers
 
             var carModels = await this._context.CarModels
                 .OrderBy(x => x.Name).ToListAsync();
-            ViewData["CarModelId"] = new SelectList(carModels, "Id", "Name");
+            this.ViewData["CarModelId"] = new SelectList(carModels, "Id", "Name");
             this.ViewBag.CarModels = carModel;
-            return View(new CarGradeEditModel());
+            return this.View(new CarGradeEditModel());
         }
 
         // POST: CarGrades/Create
@@ -136,9 +134,9 @@ namespace Backend6.Controllers
                 await this._context.SaveChangesAsync();
                 return this.RedirectToAction("Details", "CarModels", new { carModelId = carModel.Id });
             }
-            ViewData["CarModelId"] = new SelectList(_context.CarModels, "Id", "ModelPath");
+            this.ViewData["CarModelId"] = new SelectList(_context.CarModels, "Id", "ModelPath");
             this.ViewBag.CarModels = carModel;
-            return View(model);
+            return this.View(model);
         }
 
         // GET: CarGrades/Edit/5
@@ -146,17 +144,17 @@ namespace Backend6.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var carGrade = await _context.CarGrades
+            var carGrade = await this._context.CarGrades
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (carGrade == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
-            ViewData["CarModelId"] = new SelectList(_context.CarModels, "Id", "ModelPath", carGrade.CarModelId);
-            return View(carGrade);
+            this.ViewData["CarModelId"] = new SelectList(this._context.CarModels, "Id", "ModelPath", carGrade.CarModelId);
+            return this.View(carGrade);
         }
 
         // POST: CarGrades/Edit/5
@@ -168,25 +166,25 @@ namespace Backend6.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
             var carGrade = await this._context.CarGrades
                 .SingleOrDefaultAsync(m => m.Id == id);
 
             if (carGrade == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
-            if (ModelState.IsValid)
+            if (this.ModelState.IsValid)
             {
                 carGrade.Name = model.Name;
                 carGrade.Description = model.Description;
 
                 await this._context.SaveChangesAsync();
-                return RedirectToAction("Details", "CarModels", new { carModelId = carGrade.CarModelId });
+                return this.RedirectToAction("Details", "CarModels", new { carModelId = carGrade.CarModelId });
             }
-            ViewData["CarModelId"] = new SelectList(_context.CarModels, "Id", "ModelPath", carGrade.CarModelId);
-            return View(model);
+            ViewData["CarModelId"] = new SelectList(this._context.CarModels, "Id", "ModelPath", carGrade.CarModelId);
+            return this.View(model);
         }
 
         // GET: CarGrades/Delete/5
@@ -194,19 +192,19 @@ namespace Backend6.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
-            var carGrade = await _context.CarGrades
+            var carGrade = await this._context.CarGrades
                 .Include(c => c.CarModel)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (carGrade == null)
             {
-                return NotFound();
+                return this.NotFound();
             }
 
             this.ViewBag.CarModels = carGrade;
-            return View(carGrade);
+            return this.View(carGrade);
         }
 
         // POST: CarGrades/Delete/5
@@ -219,21 +217,21 @@ namespace Backend6.Controllers
                 return this.NotFound();
             }
 
-            var carGrade = await _context.CarGrades
+            var carGrade = await this._context.CarGrades
                 .Include(c=> c.CarModel)
                 .SingleOrDefaultAsync(m => m.Id == carModelId);
             if (carGrade == null)
             {
                 return this.NotFound();
             }
-            _context.CarGrades.Remove(carGrade);
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Details", "CarModels", new { carModelId = carGrade.CarModel.Id });
+            this._context.CarGrades.Remove(carGrade);
+            await this._context.SaveChangesAsync();
+            return this.RedirectToAction("Details", "CarModels", new { carModelId = carGrade.CarModel.Id });
         }
 
         private bool CarGradeExists(Guid id)
         {
-            return _context.CarGrades.Any(e => e.Id == id);
+            return this._context.CarGrades.Any(e => e.Id == id);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿@model Backend6.Models.CarPart
-
+﻿@model Backend6.Models.ViewModels.CarPartEditModel
 @{
     ViewData["Title"] = "Create";
 }
@@ -10,15 +9,15 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" asp-controller="CarParts" asp-route-carGradeId="@ViewBag.CarGrades.Id" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="CarGradeId" class="control-label"></label>
                 <select asp-for="CarGradeId" class ="form-control" asp-items="ViewBag.CarGradeId"></select>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="PartPath" class="control-label"></label>
-                <input asp-for="PartPath" class="form-control" />
+                <input type="file" asp-for="PartPath" class="form-control" />
                 <span asp-validation-for="PartPath" class="text-danger"></span>
             </div>
             <div class="form-group">

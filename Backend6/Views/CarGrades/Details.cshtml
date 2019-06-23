@@ -14,8 +14,8 @@
     @if (User.IsInRole(ApplicationRoles.Administrators))
     {
         <div class="col-xs-3 col-md-2">
-            <p>Добавить раздел</p>
-            <a asp-action="Create" asp-controller="CarGrades" asp-route-carModelId="@ViewBag.CarModelId" class="thumbnail new-image">
+            <p>Добавить часть</p>
+            <a asp-action="Create" asp-controller="CarParts" asp-route-carGradeId="@ViewBag.CarGradeId" class="thumbnail new-image">
                 <div>
                     + Upload
                 </div>
@@ -26,7 +26,7 @@
     {
         <div class="col-xs-3 col-md-2">
             <p>@item.Name</p>
-            <a asp-action="Details" asp-route-carBrandId="" class="thumbnail image">
+            <a asp-action="Details" asp-controller="CarParts"  asp-route-carPartId="@item.Id" class="thumbnail image">
                 <img src="@item.PartPath" alt="Image" />
             </a>
             @if (User.IsInRole(ApplicationRoles.Administrators))
