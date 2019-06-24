@@ -97,17 +97,20 @@ namespace Backend6.Controllers
             }
 
             var fileName = Path.GetFileName(ContentDispositionHeaderValue.Parse(model.DetailPath.ContentDisposition).FileName.Value.Trim('"'));
-            var fileExt = Path.GetExtension(fileName); 
+            var fileExt = Path.GetExtension(fileName);
             if (!CarDetailsController.AllowedExtensions.Contains(fileExt))
             {
                 this.ModelState.AddModelError(nameof(model.DetailPath), "This file type is prohibited");
             }
 
+            var user = await this.userManager.GetUserAsync(this.HttpContext.User);
             var carPart = await this._context.CarParts                
                 .SingleOrDefaultAsync(m => m.Id == carPartId);
-            //var basket = await this._context.Baskets
-            //    .SingleOrDefaultAsync(m => m.Id == carPartId);
-            var user = await this.userManager.GetUserAsync(this.HttpContext.User);
+            var baskets = await this._context.Baskets
+                .Include(p => p.CarDetails)
+                .Include(u => u.Creator)
+                .SingleOrDefaultAsync(m => m.Id == carPartId);
+            
             if (carPart == null)
             {
                 this.NotFound();
@@ -119,7 +122,7 @@ namespace Backend6.Controllers
                 var carDetail = new CarDetail
                 {
                     CarPartId = carPart.Id,
-                    //BasketId = ,
+                    //BasketId = baskets.Creator.Id,
                     Name = model.Name,
                     Description = model.Description,
                     Cost = model.Cost
